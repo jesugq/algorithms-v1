@@ -7,8 +7,8 @@ class Solution:
         sorted_list1 = sorted(s1)
         sorted_list2 = sorted(s2)
 
-        sorted_string1 = "".join(sorted_list1)
-        sorted_string2 = "".join(sorted_list2)
+        sorted_string1 = ''.join(sorted_list1)
+        sorted_string2 = ''.join(sorted_list2)
 
         # Obtain the breaker (highest lexicographical ordering) and the target
         string_breaker = sorted_string1
