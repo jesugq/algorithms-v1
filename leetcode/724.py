@@ -2,58 +2,52 @@ import typing
 
 class PivotFinder:
     NO_PIVOT_INDEX = -1
-    NO_SINGLE_SUM = 0
+    NO_PIVOT_NUMBER = -1
+    INITIAL_INDEX = 0
+    INITIAL_VALUE = 0
 
     def __init__(self, numbers=None):
         self.numbers = numbers
-        self.length = len(numbers)
-    
-    def find_pivot_index(self) -> int:
+        self.pivot_index = self.NO_PIVOT_INDEX
+        self.pivot_number = self.NO_PIVOT_NUMBER
+
+    def find_pivot(self) -> int:
+        left_side_sum = self.INITIAL_VALUE
+        right_side_sum = sum(self.numbers)
+        previous_number = self.INITIAL_VALUE
+        current_number = self.INITIAL_VALUE
+
         for index, number in enumerate(self.numbers):
-            if self.sides_are_equal(index):
-                return index
-        return self.NO_PIVOT_INDEX
-        
+            current_number = number
+            left_side_sum += previous_number
+            right_side_sum -= current_number
+            
+            if left_side_sum == right_side_sum:
+                self.make_pivot(index, number)
+                break
+                
+            previous_number = current_number
 
-    def sides_are_equal(self, index: int) -> bool:
-        left_sum = self.sides_left_sum(index)
-        right_sum = self.sides_right_sum(index)
+    def make_pivot(self, index: int, number: int) -> int:
+        self.pivot_index = index
+        self.pivot_number = number
 
-        return left_sum == right_sum
+    def get_pivot_index(self) -> int:
+        return self.pivot_index
 
-    def sides_left_sum(self, index: int) -> int:
-        start = 0
-        stop = index
-
-        if start >= stop:
-            return self.NO_SINGLE_SUM
-        else:
-            return self.sides_single_sum(start, stop)
-    
-    def sides_right_sum(self, index: int) -> int:
-        start = index + 1
-        stop = self.length
-
-        if start >= stop:
-            return self.NO_SINGLE_SUM
-        else:
-            return self.sides_single_sum(start, stop)
-
-    def sides_single_sum(self, start: int, stop: int) -> int:
-        single_sum = 0
-        for index in range(start, stop):
-            single_sum += self.numbers[index]
-        return single_sum
+    def get_pivot_number(self) -> int:
+        return self.pivot_number
 
 class Solution:
     def pivotIndex(self, nums: typing.List[int]) -> int:
         pivot_finder = PivotFinder(nums)
-        return pivot_finder.find_pivot_index()
+        pivot_finder.find_pivot()
+        return pivot_finder.get_pivot_index()
 
 class Main:
     def execute(self):
         solution = Solution()
-        nums = self.two()
+        nums = self.one()
         answer = solution.pivotIndex(nums)
         print(answer)
 
