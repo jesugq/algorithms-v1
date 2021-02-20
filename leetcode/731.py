@@ -3,42 +3,18 @@ import bisect
 
 class MyCalendarTwo:
     def __init__(self):
-        self.START: int = 0
-        self.END: int = 1
-        self.books: List[List[int]] = []
+        self.calendar: List[List[int]] = []
+        self.overlaps: List[List[int]] = []
 
     def book(self, start: int, end: int) -> bool:
-        possible = self.possible_booking(start, end)
-        if possible:
-            self.add_booking(start, end)
-            return True
-        return False
-
-    def possible_booking(self, start: int, end: int):
-        relevant_books: List[List[int]] = [[start, end]]
-        relevant_times: Set[int] = set([start, end])
-        for book in self.books:
-            if book[self.END] < start:
-                continue
-            elif start <= book[self.START] or start < book[self.END] or book[self.START] < end or book[self.END] <= end:
-            # elif start <= book[self.START] or book[self.START] < end or start < book[self.END] or book[self.END] <= end:
-                relevant_books.append(book)
-                relevant_times.add(book[self.START])
-                relevant_times.add(book[self.END])
-            elif book[self.START] > end:
-                break
-        
-        for time in relevant_times:
-            times_repeated: int = 0
-            for book in relevant_books:
-                if book[self.START] <= time < book[self.END]:
-                    times_repeated += 1
-                if times_repeated > 2:
-                    return False
+        for overstart, overend in self.overlaps:
+            if start < overend and end > overstart:
+                return False
+        for calstart, calend in self.calendar:
+            if start < calend and end > calstart:
+                self.overlaps.append([max(start, calstart), min(end, calend)])
+        self.calendar.append([start, end])
         return True
-
-    def add_booking(self, start: int, end: int):
-        bisect.insort(self.books, [start,end])
 
 class Main:
     def execute(self):
@@ -52,7 +28,7 @@ class Main:
                 single_test = test[single_index] 
                 single_answer = answer[single_index] 
                 single_output = solution.book(single_test[0], single_test[1])
-                print(single_answer == single_output, '|', single_answer, single_output, solution.books)
+                print(single_answer == single_output, '|', single_answer, single_output)
             print()
     
     def tests(self):
